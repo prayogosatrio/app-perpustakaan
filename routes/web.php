@@ -16,3 +16,10 @@ Route::resource('members', MemberController::class);
 Route::resource('loans', LoanController::class);
 Route::put('/loans/{id}/kembalikan', [LoanController::class, 'kembalikan'])
     ->name('loans.kembalikan');
+
+// Tugas Pertemuan 2 - Route Group dengan prefix /admin
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/info', function () {
+        return 'Admin Perpustakaan - Info Aplikasi';
+    })->name('info');
+});
