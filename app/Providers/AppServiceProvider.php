@@ -20,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Pagination pakai HTML sederhana (tanpa Tailwind), style-nya ada di layouts/app.blade.php
-        Paginator::useBootstrapFour();
+        // Pagination custom berupa teks/link biasa (project ini tidak memakai Tailwind CSS)
+        Paginator::defaultView('vendor.pagination.custom');
     }
 }
