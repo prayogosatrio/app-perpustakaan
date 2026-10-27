@@ -7,11 +7,11 @@
     <style>
         * { box-sizing: border-box; }
         body { font-family: sans-serif; margin: 0; color: #1f2937; }
-        nav { background: #1e3a8a; padding: 14px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        nav .brand { color: #fff; font-weight: bold; font-size: 18px; }
-        nav ul { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
-        nav ul li a { color: #cbd5e1; text-decoration: none; padding: 6px 4px; }
-        nav ul li a.active { color: #fff; font-weight: bold; border-bottom: 2px solid #fff; }
+        body > nav { background: #1e3a8a; padding: 14px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        body > nav .brand { color: #fff; font-weight: bold; font-size: 18px; }
+        body > nav ul { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
+        body > nav ul li a { color: #cbd5e1; text-decoration: none; padding: 6px 4px; }
+        body > nav ul li a.active { color: #fff; font-weight: bold; border-bottom: 2px solid #fff; }
         main { max-width: 900px; margin: 0 auto; padding: 30px 40px; }
         table { border-collapse: collapse; width: 100%; margin-top: 16px; }
         th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
@@ -25,6 +25,11 @@
         form.form-box input, form.form-box select, form.form-box textarea { width: 100%; padding: 6px; margin-top: 4px; }
         form.form-box .btn { margin-top: 20px; }
         .error { color: #b91c1c; font-size: 14px; margin-top: 4px; }
+        /* Pagination */
+        .pagination { list-style: none; display: flex; gap: 4px; padding: 0; margin: 16px 0; }
+        .pagination .page-link { display: block; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; color: #2563eb; text-decoration: none; }
+        .pagination .page-item.active .page-link { background: #2563eb; border-color: #2563eb; color: #fff; }
+        .pagination .page-item.disabled .page-link { color: #9ca3af; }
     </style>
 </head>
 <body>
