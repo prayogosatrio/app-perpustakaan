@@ -8,6 +8,18 @@
 
     <p><a href="{{ route('members.create') }}" class="btn">+ Tambah Anggota</a></p>
 
+    <form action="{{ route('members.index') }}" method="GET" class="search-box">
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama anggota...">
+        <button type="submit" class="btn">Cari</button>
+        @if (request('search'))
+            <a href="{{ route('members.index') }}">Reset</a>
+        @endif
+    </form>
+
+    @if (request('search'))
+        <p>Hasil pencarian untuk "<strong>{{ request('search') }}</strong>": {{ $members->total() }} anggota ditemukan.</p>
+    @endif
+
     <table>
         <thead>
             <tr>
@@ -16,7 +28,6 @@
                 <th>NIM</th>
                 <th>Email</th>
                 <th>No. Telepon</th>
-                <th>Alamat</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>
@@ -28,8 +39,7 @@
                     <td>{{ $member['nama'] }}</td>
                     <td>{{ $member['nim'] }}</td>
                     <td>{{ $member['email'] }}</td>
-                    <td>{{ $member['nomor_telepon'] ?? '-' }}</td>
-                    <td>{{ $member['alamat'] ?? '-' }}</td>
+                    <td>{{ $member['nomor_telepon'] }}</td>
                     <td>{{ ucfirst($member['status']) }}</td>
                     <td>
                         <a href="{{ route('members.show', $member['id']) }}">Detail</a>
@@ -45,11 +55,17 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8">Belum ada data anggota.</td>
+                    <td colspan="7">
+                        @if (request('search'))
+                            Tidak ada anggota dengan nama "{{ request('search') }}".
+                        @else
+                            Belum ada data anggota.
+                        @endif
+                    </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
-    <p><em>Catatan: data di atas masih data dummy (array statis di Controller). CRUD lengkap anggota baru dibuat mulai Pertemuan 5.</em></p>
+    {{ $members->appends(request()->query())->links() }}
 @endsection
