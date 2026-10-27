@@ -1,58 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Perpustakaan Digital Kampus (`app-perpustakaan`)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web untuk petugas dan admin perpustakaan kampus: mengelola data buku, kategori, anggota, serta transaksi peminjaman dan pengembalian buku. Dibangun dengan **Laravel 13** dan **MySQL** sebagai project praktikum mata kuliah Pemrograman Framework (Pertemuan 1-10).
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Login/logout** berbasis session, dengan dua role:
+  - **Admin**: akses penuh, termasuk kelola kategori.
+  - **Petugas**: operasional harian (buku, anggota, peminjaman).
+- **CRUD buku, kategori, dan anggota**: validasi input, pagination, dan pencarian nama anggota.
+- **Peminjaman**:
+  - Satu transaksi bisa berisi banyak buku.
+  - Petugas pencatat terisi otomatis dari akun yang login.
+  - Tombol "Kembalikan" dan badge status berwarna.
+- **Dashboard** dan **Laporan Peminjaman**: datanya diambil dari REST API internal (`GET /api/stats`, `GET /api/loans`).
+- **REST API** `/api/books`, `/api/members`, `/api/loans`, `/api/stats`. Dokumentasi lengkapnya ada di [`API.md`](API.md).
+- **Halaman profil** dengan fitur ganti password.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prasyarat
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3+ dan Composer
+- MySQL 8+
+- Git
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Di macOS, ketiganya bisa dipasang lewat Homebrew:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+brew install php composer mysql
+brew services start mysql
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Instalasi
 
-## Contributing
+```bash
+# 1. Clone repository
+git clone https://github.com/prayogosatrio/app-perpustakaan.git
+cd app-perpustakaan
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 2. Install dependency
+composer install
 
-## Code of Conduct
+# 3. Siapkan file environment
+cp .env.example .env
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Buka `.env`, lalu sesuaikan bagian berikut:
 
-## Security Vulnerabilities
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_perpustakaan
+DB_USERNAME=root
+DB_PASSWORD=
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+SESSION_DRIVER=file
+APP_FAKER_LOCALE=id_ID
 
-## License
+# Server kedua khusus panggilan API internal (dipakai Dashboard & Laporan)
+INTERNAL_API_URL=http://127.0.0.1:8011
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Buat database, lalu jalankan migration dan seeder:
+
+```bash
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS db_perpustakaan;"
+php artisan migrate:fresh --seed
+```
+
+Seeder mengisi data demo bergaya Indonesia: 3 user, 5 kategori, 20 buku, 15 anggota, dan 10 transaksi peminjaman.
+
+## Menjalankan Aplikasi (Dua Server)
+
+`php artisan serve` hanya memproses **satu request pada satu waktu**. Halaman Dashboard dan Laporan memanggil API milik aplikasi ini sendiri lewat HTTP. Kalau panggilan itu dikirim ke server yang sama, server akan deadlock (saling menunggu). Karena itu, jalankan **dua server di dua terminal terpisah**:
+
+```bash
+# Terminal 1 - server utama untuk browser
+php artisan serve --port=8000
+
+# Terminal 2 - server khusus panggilan API internal (sesuai INTERNAL_API_URL)
+php artisan serve --port=8011
+```
+
+Buka `http://127.0.0.1:8000`. Kalau server kedua tidak menyala, aplikasi tetap berjalan: Dashboard menampilkan angka 0 dan Laporan tampil kosong, tanpa error.
+
+## Akun Demo
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@pens.ac.id` | `password` |
+| Petugas | `petugas1@pens.ac.id` | `password` |
+| Petugas | `petugas2@pens.ac.id` | `password` |
+
+## Dokumentasi Lain
+
+- [`API.md`](API.md): dokumentasi seluruh endpoint REST API beserta contoh request/response.
+- [`DEMO.md`](DEMO.md): skenario demo aplikasi langkah demi langkah.
+
+## Alur Kerja Git
+
+- `dev`: branch pengembangan aktif. Setiap pertemuan di-commit dengan format `[P-X] deskripsi`.
+- `main`: kondisi stabil yang siap didemokan (hasil merge dari `dev`).
