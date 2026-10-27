@@ -25,6 +25,13 @@
         form.form-box input, form.form-box select, form.form-box textarea { width: 100%; padding: 6px; margin-top: 4px; }
         form.form-box .btn { margin-top: 20px; }
         .error { color: #b91c1c; font-size: 14px; margin-top: 4px; }
+        form.form-box input[type="checkbox"] { width: auto; margin: 0 6px 0 0; }
+        .checkbox-list { border: 1px solid #ccc; border-radius: 4px; padding: 10px; margin-top: 4px; max-height: 200px; overflow-y: auto; }
+        form.form-box .checkbox-list label { font-weight: normal; margin-top: 4px; }
+        .readonly { background: #f3f4f6; padding: 8px; border-radius: 4px; margin-top: 4px; }
+        .form-label { display: block; margin-top: 12px; font-weight: bold; }
+        /* Tabel detail (halaman show) */
+        table.info th { width: 180px; background: #f3f4f6; }
         /* Pagination */
         .pagination { list-style: none; display: flex; gap: 4px; padding: 0; margin: 16px 0; }
         .pagination .page-link { display: block; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; color: #2563eb; text-decoration: none; }
